@@ -1,0 +1,39 @@
+#videoElement {
+    width: 500px;
+    height: 500px;
+    background-color: #666;
+    border: 2px #333 solid;
+    border-radius: 50%;
+}
+
+#bb_canvas {
+
+    position: absolute;
+    width: 500px;
+    height: 375px;
+    z-index:10
+
+}
+
+.centered{
+    width:100%;
+    text-align:center;
+}
+
+.title{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 50px
+}
+.scrolling-wrapper {
+    margin-top:10px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  display: none;
+
+
+}
+  .card {
+    display: inline-block;
+
+  }
