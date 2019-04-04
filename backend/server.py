@@ -5,13 +5,14 @@ import numpy as np
 import cv2
 import string
 import random
+import os
 
 import face_detector as fd
 
 random_string = lambda x: "".join([random.choice(string.ascii_letters) for _ in range(x)])
 
 detector = fd.FaceDetector()
-output_addr = "./"
+output_addr = "/tmp"
 
 class EchoWebSocket(WebSocketHandler):
 
@@ -22,7 +23,11 @@ class EchoWebSocket(WebSocketHandler):
         self.detector = detector
 
     def open(self):
-        print("WebSocket opened")
+        self.sess_id = random_string(30)
+        self.user_folder = os.path.join(output_addr, self.sess_id)
+        if not os.path.exists(self.user_folder):
+            os.makedirs(self.user_folder)
+        print("Session opened for id: {}".format(self.sess_id))
 
     def on_message(self, data):
         img_data = np.fromstring(data, dtype=np.uint8)
@@ -34,19 +39,11 @@ class EchoWebSocket(WebSocketHandler):
         cv2.destroyAllWindows()
         '''
         faces = self.detector.get_faces_from_img(img)
-        print(faces)
-        '''
+        print("Foung {} faces".format(np.shape(faces)[0]))
         if np.shape(faces)[0]:
-            sess_id = session.get('sess_id', None)
-            if sess_id is None:
-                gen_sess_id = random_string(20)
-                session['sess_id'] = gen_sess_id
-                sess_id = gen_sess_id
-
-            op = os.path.join(output_addr, sess_id,
+            op = os.path.join(self.user_folder,
                               "{}.jpg".format(random_string(30)))
-            cv2.imwrite(img, op)
-        '''
+            cv2.imwrite(op, img)
 
         for face in faces:
             bb = face.bounding_box
