@@ -1,130 +1,85 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-
-<link rel="stylesheet" href="styles.css">
-<title>SIDIA's Face Capturing</title>
-
-</head>
-
-<body>
-    <div class='centered' style="margin-top: 20px; margin-bottom: 20px">
-        <h1 class='title'>Porfavor mexa sua cabeca em varios sentidos aleatorios. </h1>
-    </div>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="content-language" content="en-EN" />
+        <title>SIDIA Face Capturing APP</title>
 
 
-<div class='centered'>
-    <canvas id='bb_canvas'></canvas>
-    <video autoplay="true" id="videoElement">
-    </video>
-</div>
+        <script type="text/javascript" src='capture_send_image.js'></script>
 
-<div class='centered' style="margin-top: 20px; margin-bottom: 20px">
-    <p id="hold_secs_message" style="font-size:20px; display:none;">Porfavor aguarde pelo menos <span id="secs"></span> segundos.</p>
-    <h1 id="end_message" style="display: none">Obrigado pela sua cooperacao !!!
-        Compartilhe o link !! e volte sempre que quiser continuar
-        coolaborando</h1>
-</div>
+        <!-- INCLUDE JEELIZ FACEFILTER SCRIPT -->
+        <script type="text/javascript" src="libs/jeelizFaceFilter.js"></script>
 
-<script>
+        <!-- INCLUDE THREE.JS -->
+        <script type="text/javascript" src="libs/three.js"></script>
 
-    var cam_open = false;
-    var secs = 30;
-    var ws = new WebSocket("ws://localhost:5000/detect");
-    var wsopen = false
+        <!-- INCLUDE JEELIZRESIZER -->
+        <script type="text/javascript" src="libs/JeelizResizer.js"></script>
 
-    ws.onopen = function() {
-        wsopen = true;
-    };
+        <!-- INCLUDE JEELIZTHREEJSHELPER -->
+        <script type="text/javascript" src="libs/JeelizThreejsHelper.js"></script>
 
-    ws.onmessage = function(evt)
-        {
-            var data = JSON.parse(evt.data);
-            console.log("Detected ...");
-            console.log(data);
+        <!-- INCLUDE FLEXMATERIAL (CUSTOM DEV) -->
+        <script type="text/javascript" src="libs/ThreeFlexMaterial.js"></script>
 
-            var canvas = document.getElementById("bb_canvas");
-            var cw = canvas.width;
-            var ch = canvas.height;
-            canvas.width = 0;
-            canvas.height = 0;
-            canvas.width = cw;
-            canvas.height = ch;
-            var w_fact = canvas.width / canvas.offsetWidth;
-            var h_fact = canvas.height / canvas.offsetHeight;
-            ctx = canvas.getContext('2d');
-            ctx.strokeStyle = 'yellow';
-            ctx.rect(data['x'] * w_fact, data['y'] * h_fact, data['w'] * w_fact, data['h'] * h_fact);
-            ctx.stroke();
+        <!-- INCLUDE TWEEN.JS -->
+        <script src='libs/Tween.min.js'></script>
 
-        };
+        <!-- INCLUDE JQUERY -->
+        <script type="text/javascript" src='libs/jquery-3.3.1.min.js'></script>
 
-    var video = document.getElementById("videoElement");
 
-    if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({video: true})
-        .then(function(stream) {
+        <!-- INCLUDE GLFX -->
+        <script src='libs/glfx.js'></script>
 
-            document.getElementById('hold_secs_message').style.display='block';
-            cam_open = true;
-            video.srcObject = stream;
-        })
-        .catch(function(err0r) {
-            console.log("Something went wrong!");});
-    }
+        <!-- INCLUDE DEMO SCRIPT -->
+        <script type="text/javascript" src="./demo.js"></script>
 
-    function count_down_and_show(){
+        <!-- INCLUDE ADDDRAGEVENTLISTENER.JS -->
+        <script src='libs/addDragEventListener.js'></script>
 
-        if(cam_open){
-            document.getElementById('hold_secs_message').style.display = 'block';
-            document.getElementById('secs').innerHTML = secs;
-            if(secs > 0){
-                secs --;
+
+        <style>
+            .canvasContainer {
+                position: relative;
+                margin: 0 auto;
+                text-align: center;
             }
-        }
+            #jeeFaceFilterCanvas {
+                z-index: 0;
+                max-height: 100%;
+                left: auto;
+                top: auto;
+                width: 100vmin;
+                transform: translate(0,0) rotateY(180deg);
+                position: static;
+                border-radius: 50%;
+            }
+            img {
+                max-width: 100%;
+            }
+            #filter {
+                position: absolute;
+                z-index: 0;
+                max-height: 100%;
+                width: 100vmin;
+                top: 0;
+                left: 50%;
+                transform: translate(-50%);
+                opacity: 0.15;
+            }
+            #filter canvas {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
 
-        if(secs == 15){
-            document.getElementById('end_message').style.display = 'block';
-        }
-
-    }
-
-    function dataURLtoBlob(dataURL) {
-
-        var binary = atob(dataURL.split(',')[1]);
-        var array = [];
-        for(var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-        }
-        return new Blob([new Uint8Array(array)], {type: 'image/png'});
-    }
-
-    function captureImage() {
-
-        var video = document.getElementById("videoElement");
-
-        var canvas = document.createElement("canvas");
-        canvas.width= video.offsetWidth;
-        canvas.height= video.offsetHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width,
-        canvas.height);
-        var data_url = canvas.toDataURL();
-
-        return data_url;
-     };
-
-    function main(){
-        console.log('Capturing and sending ...')
-        var data_url = captureImage();
-        var image_blob = dataURLtoBlob(data_url);
-        ws.send(image_blob);
-    }
-
-    setInterval(main, 800);
-    setInterval(count_down_and_show, 1000);
-
-
-</script>
-</body>
+    <body onload="main()" style='color: white'>
+        <div class="canvasContainer">
+            <canvas width="600" height="600" id='jeeFaceFilterCanvas'></canvas>
+            <div id='filter'></div>
+        </div>
+    </body>
 </html>
