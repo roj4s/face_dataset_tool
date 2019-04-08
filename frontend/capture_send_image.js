@@ -38,7 +38,7 @@ function sendImage(ws, videoElementId){
     var currentInstant = new Date().getTime();
     var lapse = (currentInstant - last_instant) / 1000;
 
-    if(lapse > time_threshold){
+    if(lapse > time_threshold && ws.readyState === ws.OPEN){
         last_instant = currentInstant;
         var data_url = captureImage(videoElementId);
         var image_blob = dataURLtoBlob(data_url);
