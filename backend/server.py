@@ -7,11 +7,13 @@ import string
 import random
 import os
 
+'''
+#Face detection is performed on users' browser now
 import face_detector as fd
+detector = fd.FaceDetector()
+'''
 
 random_string = lambda x: "".join([random.choice(string.ascii_letters) for _ in range(x)])
-
-detector = fd.FaceDetector()
 output_addr = "/tmp"
 
 class EchoWebSocket(WebSocketHandler):
@@ -19,8 +21,11 @@ class EchoWebSocket(WebSocketHandler):
     def check_origin(self, origin):
         return True
 
+    '''
+    #Face detection is performed on users' browser now
     def initialize(self, detector):
         self.detector = detector
+    '''
 
     def open(self):
         self.sess_id = random_string(30)
@@ -38,6 +43,8 @@ class EchoWebSocket(WebSocketHandler):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         '''
+        '''
+        #Face detection is performed on users' browser now
         faces = self.detector.get_faces_from_img(img)
         print("Foung {} faces".format(np.shape(faces)[0]))
         if np.shape(faces)[0]:
@@ -49,6 +56,10 @@ class EchoWebSocket(WebSocketHandler):
             bb = face.bounding_box
             self.write_message({'x': bb.x, 'y': bb.y, 'w':
                                    bb.w, 'h': bb.h})
+        '''
+        op = os.path.join(self.user_folder,
+                              "{}.jpg".format(random_string(30)))
+        cv2.imwrite(op, img)
 
     def on_close(self):
         print("WebSocket closed")
@@ -56,7 +67,9 @@ class EchoWebSocket(WebSocketHandler):
 
 if __name__ == "__main__":
     app = Application([
-            (r"/detect", EchoWebSocket, dict(detector=detector)),
+            #Face detection is performed on users' browser now
+            #(r"/detect", EchoWebSocket, dict(detector=detector)),
+            (r"/detect", EchoWebSocket),
         ])
 
     app.listen(5000, '0.0.0.0')
