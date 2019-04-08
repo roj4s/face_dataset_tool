@@ -1,4 +1,5 @@
-const SERVER_ENDPOINT = "ws://localhost:5000/capture";
+const SERVER_ENDPOINT = "wss://3.80.209.14:5000/capture";
+//const SERVER_ENDPOINT = "wss://localhost:5000/capture";
 var ws = new WebSocket(SERVER_ENDPOINT);
 var last_instant = new Date().getTime();
 var time_threshold = 3;
