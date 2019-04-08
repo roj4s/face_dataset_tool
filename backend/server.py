@@ -16,7 +16,7 @@ detector = fd.FaceDetector()
 random_string = lambda x: "".join([random.choice(string.ascii_letters) for _ in range(x)])
 output_addr = "/tmp"
 
-class EchoWebSocket(WebSocketHandler):
+class WS(WebSocketHandler):
 
     def check_origin(self, origin):
         return True
@@ -33,6 +33,7 @@ class EchoWebSocket(WebSocketHandler):
         if not os.path.exists(self.user_folder):
             os.makedirs(self.user_folder)
         print("Session opened for id: {}".format(self.sess_id))
+        self.images_saved = 0
 
     def on_message(self, data):
         img_data = np.fromstring(data, dtype=np.uint8)
@@ -60,6 +61,8 @@ class EchoWebSocket(WebSocketHandler):
         op = os.path.join(self.user_folder,
                               "{}.jpg".format(random_string(30)))
         cv2.imwrite(op, img)
+        self.images_saved += 1
+        self.write_message("{} Images saved so far ...".format(self.images_saved))
 
     def on_close(self):
         print("WebSocket closed")
@@ -68,8 +71,8 @@ class EchoWebSocket(WebSocketHandler):
 if __name__ == "__main__":
     app = Application([
             #Face detection is performed on users' browser now
-            #(r"/detect", EchoWebSocket, dict(detector=detector)),
-            (r"/detect", EchoWebSocket),
+            #(r"/detect", WS, dict(detector=detector)),
+            (r"/capture", WS),
         ])
 
     app.listen(5000, '0.0.0.0')
