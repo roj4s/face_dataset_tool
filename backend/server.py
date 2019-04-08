@@ -1,6 +1,7 @@
 from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.ioloop import IOLoop
+from tornado.httpserver import HTTPServer, ssl
 import numpy as np
 import cv2
 import string
@@ -75,7 +76,11 @@ if __name__ == "__main__":
             (r"/capture", WS),
         ])
 
-    app.listen(5000, '0.0.0.0')
+    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ssl_ctx.load_cert_chain("cert.crt", "key.key")
+    server = HTTPServer(app, ssl_options=ssl_ctx)
+    server.bind('5000', '0.0.0.0')
+    server.start(0)
     print("{} Server started")
     IOLoop.current().start()
 
