@@ -77,7 +77,8 @@ if __name__ == "__main__":
         ])
 
     ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    ssl_ctx.load_cert_chain("cert.crt", "key.key")
+    ssl_ctx.load_cert_chain("/etc/letsencrypt/live/feis.in/fullchain.pem",
+                            "/etc/letsencrypt/live/feis.in/privkey.pem")
     server = HTTPServer(app, ssl_options=ssl_ctx)
     server.bind('5000', '0.0.0.0')
     server.start(0)
