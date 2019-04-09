@@ -1,5 +1,5 @@
-//const SERVER_ENDPOINT = "wss://feis.in:5000/capture";
-const SERVER_ENDPOINT = "wss://localhost:5000/capture";
+const SERVER_ENDPOINT = "wss://feis.in:5000/capture";
+//const SERVER_ENDPOINT = "wss://localhost:5000/capture";
 
 var ws = new WebSocket(SERVER_ENDPOINT);
 var last_instant = new Date().getTime();
