@@ -37,15 +37,15 @@ class WS(WebSocketHandler):
         self.images_saved = 0
 
     def on_message(self, data):
+        print("Data is: {}".format(data))
+        '''
         img_data = np.fromstring(data, dtype=np.uint8)
         img = cv2.imdecode(img_data, 1)
-        '''
         # Uncomment to see frontend sent image
         cv2.imshow('img', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        '''
-        '''
+
         #Face detection is performed on users' browser now
         faces = self.detector.get_faces_from_img(img)
         print("Foung {} faces".format(np.shape(faces)[0]))
@@ -58,11 +58,11 @@ class WS(WebSocketHandler):
             bb = face.bounding_box
             self.write_message({'x': bb.x, 'y': bb.y, 'w':
                                    bb.w, 'h': bb.h})
-        '''
         op = os.path.join(self.user_folder,
-                              "{}.jpg".format(random_string(30)))
+                              "{}.png".format(random_string(30)))
         cv2.imwrite(op, img)
         self.images_saved += 1
+        '''
         self.write_message("{} Images saved so far ...".format(self.images_saved))
 
     def on_close(self):
@@ -79,7 +79,12 @@ if __name__ == "__main__":
     ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     ssl_ctx.load_cert_chain("/etc/letsencrypt/live/feis.in/fullchain.pem",
                             "/etc/letsencrypt/live/feis.in/privkey.pem")
+    '''
+    ssl_ctx.load_cert_chain("cert.crt",
+                            "key.key")
+    '''
     server = HTTPServer(app, ssl_options=ssl_ctx)
+    #server = HTTPServer(app)
     server.bind('5000', '0.0.0.0')
     server.start(0)
     print("{} Server started")
