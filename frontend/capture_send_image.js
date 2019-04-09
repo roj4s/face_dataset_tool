@@ -1,5 +1,6 @@
 const SERVER_ENDPOINT = "wss://feis.in:5000/capture";
 //const SERVER_ENDPOINT = "wss://localhost:5000/capture";
+
 var ws = new WebSocket(SERVER_ENDPOINT);
 var last_instant = new Date().getTime();
 var time_threshold = 3;
@@ -43,8 +44,8 @@ function sendImage(ws, videoElementId){
         last_instant = currentInstant;
         var data_url = captureImage(videoElementId);
         var image_blob = dataURLtoBlob(data_url);
-        //ws.send(image_blob);
-        ws.send("new data dude !");
+        ws.send(image_blob);
+        //ws.send("new data dude !");
     }
 }
 
