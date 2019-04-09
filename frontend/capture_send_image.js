@@ -43,7 +43,8 @@ function sendImage(ws, videoElementId){
         last_instant = currentInstant;
         var data_url = captureImage(videoElementId);
         var image_blob = dataURLtoBlob(data_url);
-        ws.send(image_blob);
+        //ws.send(image_blob);
+        ws.send("new data dude !");
     }
 }
 
