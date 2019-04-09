@@ -1,5 +1,5 @@
-const SERVER_ENDPOINT = "wss://feis.in:5000/capture";
-//const SERVER_ENDPOINT = "wss://localhost:5000/capture";
+//const SERVER_ENDPOINT = "wss://feis.in:5000/capture";
+const SERVER_ENDPOINT = "wss://localhost:5000/capture";
 
 var ws = new WebSocket(SERVER_ENDPOINT);
 var last_instant = new Date().getTime();
@@ -20,13 +20,11 @@ function dataURLtoBlob(dataURL) {
     return new Blob([new Uint8Array(array)], {type: 'image/png'});
 }
 
-function captureImage(videoElementId) {
-
-    var video = document.getElementById(videoElementId);
+function captureImage(video) {
 
     var canvas = document.createElement("canvas");
-    canvas.width= video.offsetWidth;
-    canvas.height= video.offsetHeight;
+    canvas.width= 640;
+    canvas.height= 480;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width,
     canvas.height);
     var data_url = canvas.toDataURL();
@@ -34,7 +32,7 @@ function captureImage(videoElementId) {
     return data_url;
  };
 
-function sendImage(ws, videoElementId){
+function sendImage(ws, videoElement){
 
 
     var currentInstant = new Date().getTime();
@@ -42,10 +40,10 @@ function sendImage(ws, videoElementId){
 
     if(lapse > time_threshold && ws.readyState === ws.OPEN){
         last_instant = currentInstant;
-        var data_url = captureImage(videoElementId);
+        var data_url = captureImage(videoElement);
         var image_blob = dataURLtoBlob(data_url);
+        console.log(image_blob);
         ws.send(image_blob);
-        //ws.send("new data dude !");
     }
 }
 

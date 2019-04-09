@@ -288,7 +288,7 @@ function main(){
 
 
 function init_faceFilter(videoSettings){
-    JEEFACEFILTERAPI.init({
+    var japi = JEEFACEFILTERAPI.init({
         canvasId: 'jeeFaceFilterCanvas',
         NNCpath: 'libs/', // root of NNC.json file
         videoSettings: videoSettings,
@@ -307,7 +307,7 @@ function init_faceFilter(videoSettings){
             ISDETECTED = THREE.JeelizHelper.get_isDetected();
 
             if (ISDETECTED) {
-                sendImage(ws, "jeeFaceFilterCanvas");
+                sendImage(ws, JEEFACEFILTERAPI.videoElement);
                 const _quat = new THREE.Quaternion();
                 const _eul = new THREE.Euler();
                 _eul.setFromQuaternion(_quat);
