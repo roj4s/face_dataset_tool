@@ -40,10 +40,12 @@ class WS(WebSocketHandler):
         img_data = np.fromstring(data, dtype=np.uint8)
         img = cv2.imdecode(img_data, 1)
 
+        '''
         # Uncomment to see frontend sent image
         cv2.imshow('img', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+        '''
 
         '''
         #Face detection is performed on users' browser now
